@@ -1,0 +1,130 @@
+
+from django.db import models
+
+# Create your models here.
+
+class Uzytkownik(models.Model):
+	uzytkownik_id = models.AutoField(primary_key=True)
+	haslo = models.CharField(max_length=20)
+	email = models.EmailField(max_length=30)
+
+	class Meta:
+		verbose_name = "uzytkownik"
+		verbose_name_plural = "uzytkownicy"
+
+class Strona(models.Model):
+	strona_id = models.AutoField(primary_key=True)
+	folder = models.CharField(max_length=20)
+	uzytkownik_id = models.ForeignKey(Uzytkownik)
+	nazwaStrony = models.CharField(max_length=45)
+	opisStrony = models.CharField(max_length=255)
+	kategoriaStrony = models.CharField(max_length=20)
+	adresLogo = models.CharField(max_length=255)
+	kolorTla = models.CharField(max_length=20)
+
+	class Meta:
+		verbose_name = "strona"
+		verbose_name_plural = "strony"
+
+class Redaktor(models.Model):
+	strona_id = models.ForeignKey(Strona)
+	uzytkownik_id = models.ForeignKey(Uzytkownik)
+
+	class Meta:
+		verbose_name = "redaktor"
+		verbose_name_plural = "redaktorzy"
+
+class WiadomoscPrywatna(models.Model):
+	wiadomosc_id = models.AutoField(primary_key=True)
+	nadawca = models.ForeignKey(Uzytkownik)
+	tytulWiadomosci = models.CharField(max_length=45)
+	trescWiadomosci = models.TextField()
+	dataWyslania = models.DateTimeField('data wyslania wiadomosci')
+	odbiorca = models.IntegerField()
+	czyOdebrana = models.BooleanField()
+
+	class Meta:
+		verbose_name = "wiadomoscPrywatna"
+		verbose_name_plural = "wiadomosciPrywatne"
+
+class AnkietaPytania(models.Model):
+	ankieta_id = models.AutoField(primary_key=True)
+	uzytkownik_id = models.ForeignKey(Uzytkownik)
+	pytanieAnkiety = models.CharField(max_length=45)
+	czasRozpoczecia = models.DateTimeField('rozpoczecie ankiety')
+	czasZakonczenia = models.DateTimeField('zakonczenie ankiety')
+	rodzajAnkiety = models.IntegerField()
+
+	class Meta:
+		verbose_name = "ankietaPytania"
+		verbose_name_plural = "ankietyPytania"
+
+class AnkietaOdpowiedzi(models.Model):
+	odpowiedz_id = models.AutoField(primary_key=True)
+	ankieta_id = models.ForeignKey(AnkietaPytania)
+	odpowiedzAnkiety = models.CharField(max_length=45)
+
+	class Meta:
+		verbose_name = "ankietaOdpowiedzi"
+		verbose_name_plural = "ankietyOdpowiedzi"
+
+class OdpUzytkownika(models.Model):
+	uzytkownik_id = models.ForeignKey(Uzytkownik)
+	odpowiedz_id = models.ForeignKey(AnkietaOdpowiedzi)
+
+	class Meta:
+		verbose_name = "odpUzytkownika"
+		verbose_name_plural = "odpUzytkownikow"
+
+class Kategoria(models.Model):
+	kategoria_id = models.AutoField(primary_key=True)
+	nazwaKategorii = models.CharField(max_length=45)
+	opisKategorii = models.TextField()
+
+	def __unicode__(self):
+		return self.nazwaKategorii
+
+	class Meta:
+		verbose_name = "kategoria"
+		verbose_name_plural = "kategorie"
+
+class Tag(models.Model):
+	tag_id = models.AutoField(primary_key=True)
+	nazwaTagu = models.CharField(max_length=20)
+
+	class Meta:
+		verbose_name = "tag"
+		verbose_name_plural = "tagi"
+
+class Artykul(models.Model):
+	artykul_id = models.AutoField(primary_key=True)
+	kategoria_id = models.ForeignKey(Kategoria)
+	uzytkownik_id = models.ForeignKey(Uzytkownik)
+	tytulArty = models.CharField(max_length=45)
+	trescArty = models.TextField()
+	dataWydania = models.DateTimeField('data wydania artykulu')
+
+	class Meta:
+		verbose_name = "artykul"
+		verbose_name_plural = "artykuly"
+
+class TagiArtykulu(models.Model):
+	artykul_id = models.ForeignKey(Artykul)
+	tag_id = models.ForeignKey(Tag)
+
+	class Meta:
+		verbose_name = "tagiArtykulu"
+		verbose_name_plural = "tagiArtykulow"
+
+class Komentarz(models.Model):
+	komentarz_id = models.AutoField(primary_key=True)
+	uzytkownik_id = models.ForeignKey(Uzytkownik)
+	artykul_id = models.ForeignKey(Artykul)
+	trescKomentarza = models.TextField()
+	dataWyst = models.DateTimeField('data wtstawienia komentarza')
+
+	class Meta:
+		verbose_name = "komentarz"
+		verbose_name_plural = "komentarze"			
+	
+	

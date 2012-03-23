@@ -1,0 +1,9 @@
+{% if latest_ankieta_list %}
+    <ul>
+    {% for AnkietaPytania in latest_ankieta_list %}
+        <li>{{ AnkietaPytania.pytanieAnkiety }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Nima pytan.</p>
+{% endif %}
